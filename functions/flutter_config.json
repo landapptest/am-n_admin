@@ -1,0 +1,59 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "chattingbin-14523",
+          "appId": "1:38106120261:android:917b7f3fa9f61e2382232c",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "chattingbin-14523",
+          "appId": "1:38106120261:ios:275860c018c4d65982232c",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "chattingbin-14523",
+          "appId": "1:38106120261:ios:275860c018c4d65982232c",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "chattingbin-14523",
+          "configurations": {
+            "android": "1:38106120261:android:917b7f3fa9f61e2382232c",
+            "ios": "1:38106120261:ios:275860c018c4d65982232c",
+            "macos": "1:38106120261:ios:275860c018c4d65982232c",
+            "web": "1:38106120261:web:4d234f76cca7712282232c",
+            "windows": "1:38106120261:web:2f3a7a91df5bd01b82232c"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "runtime": "nodejs18",
+      "codebase": "default",
+      "regions": ["asia-southeast1"],
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "/Users/euijoon/.nvm/versions/node/v18.20.6/bin/npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}
