@@ -52,12 +52,14 @@ class UserDetailView extends ConsumerWidget {
             Text("이름: ${user.userName}", style: const TextStyle(fontSize: 18)),
             Text("UID: ${user.uid}"),
             Text("승인 여부: ${user.isApproved}"),
+
             const SizedBox(height: 20),
             Text("성별: ${user.gender}"),
             Text("나이대: ${user.ageGroup}"),
             Text("목적: ${user.purpose}"),
             const SizedBox(height: 10),
             Text("자기소개:\n${user.introduce}"),
+
             const Spacer(),
 
             Row(
@@ -71,10 +73,41 @@ class UserDetailView extends ConsumerWidget {
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                   child: const Text("승인"),
                 ),
+
                 ElevatedButton(
                   onPressed: () async {
-                    await adminViewModel.rejectUser(user.uid);
-                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (ctx) {
+                        final TextEditingController reasonController =
+                        TextEditingController();
+                        return AlertDialog(
+                          title: const Text("거부 사유 입력"),
+                          content: TextField(
+                            controller: reasonController,
+                            decoration: const InputDecoration(
+                              labelText: "사유를 입력하세요",
+                            ),
+                            maxLines: 2,
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text("취소"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                final reason = reasonController.text.trim();
+                                adminViewModel.rejectUser(user.uid, reason);
+                                Navigator.pop(ctx);
+                                Navigator.pop(context);
+                              },
+                              child: const Text("확인"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                   child: const Text("거부"),

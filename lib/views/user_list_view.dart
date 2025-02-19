@@ -73,7 +73,6 @@ class _UserListViewState extends ConsumerState<UserListView> {
             title: Text(user.userName),
             subtitle: Text("UID: ${user.uid}"),
             onTap: () async {
-              // 상세 페이지로 이동
               await Navigator.push(
                 context,
                 MaterialPageRoute(
