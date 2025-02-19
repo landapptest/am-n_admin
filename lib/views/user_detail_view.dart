@@ -1,9 +1,8 @@
-// lib/views/user_detail_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:admin_amin/models/user_model.dart';
 import 'package:admin_amin/providers/admin_provider.dart';
+import 'package:firebase_storage/firebase_storage.dart'; // 추가
 
 class UserDetailView extends ConsumerWidget {
   final UserModel user;
@@ -22,35 +21,45 @@ class UserDetailView extends ConsumerWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // 학생증 이미지
-            if (user.studentCardUrl.isNotEmpty)
-              Image.network(
-                user.studentCardUrl,
-                fit: BoxFit.contain,
-                height: 300,
-                errorBuilder: (ctx, error, stack) => const Text("이미지 로드 실패"),
-              )
+            if (user.studentCardUrl.isEmpty)
+              const Text("학생증 이미지가 없습니다.")
             else
-              const Text("학생증 이미지가 없습니다."),
+              FutureBuilder<String>(
+                future: FirebaseStorage.instance
+                    .ref(user.studentCardUrl)
+                    .getDownloadURL(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Text("이미지 로드 오류: ${snapshot.error}");
+                  } else if (!snapshot.hasData) {
+                    return const Text("이미지 로드 실패");
+                  }
+                  final downloadUrl = snapshot.data!;
+                  return Image.network(
+                    downloadUrl,
+                    fit: BoxFit.contain,
+                    height: 300,
+                    errorBuilder: (ctx, error, stack) =>
+                    const Text("이미지 로드 실패"),
+                  );
+                },
+              ),
 
             const SizedBox(height: 20),
 
-            // 기본 정보
             Text("이름: ${user.userName}", style: const TextStyle(fontSize: 18)),
             Text("UID: ${user.uid}"),
             Text("승인 여부: ${user.isApproved}"),
-
             const SizedBox(height: 20),
-            // 추가 정보 표시
             Text("성별: ${user.gender}"),
             Text("나이대: ${user.ageGroup}"),
             Text("목적: ${user.purpose}"),
             const SizedBox(height: 10),
             Text("자기소개:\n${user.introduce}"),
-
             const Spacer(),
 
-            // 승인 / 거부 버튼
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
