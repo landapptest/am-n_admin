@@ -16,6 +16,8 @@ class UserListView extends ConsumerStatefulWidget {
 }
 
 class _UserListViewState extends ConsumerState<UserListView> {
+  List<String> _messages = []; // 알림 메시지 저장 리스트
+
   @override
   void initState() {
     super.initState();
@@ -24,25 +26,49 @@ class _UserListViewState extends ConsumerState<UserListView> {
     });
   }
 
-  void _showTestNotification() {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
-      'test_channel_id',
+  void _showGroupedNotification(String title, String body) {
+    const String groupKey = 'test_group';
+    const String channelId = 'test_channel_id';
+
+    _messages.add(body); // 새 메시지 추가
+
+    final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      channelId,
       'Test Channel',
       channelDescription: '테스트용 알림 채널',
       importance: Importance.max,
       priority: Priority.high,
+      groupKey: groupKey,
     );
-    const NotificationDetails platformChannelSpecifics =
-    NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    final NotificationDetails platformDetails =
+    NotificationDetails(android: androidDetails);
 
     int notificationId = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-
     flutterLocalNotificationsPlugin.show(
       notificationId,
-      '테스트 알림',
-      '이것은 로컬 알림 테스트입니다.',
-      platformChannelSpecifics,
+      title,
+      body,
+      platformDetails,
+    );
+
+    final AndroidNotificationDetails summaryAndroidDetails = AndroidNotificationDetails(
+      channelId,
+      'Test Channel',
+      channelDescription: '테스트용 알림 채널',
+      styleInformation: InboxStyleInformation(_messages),
+      setAsGroupSummary: true,
+      groupKey: groupKey,
+    );
+
+    final NotificationDetails summaryNotificationDetails =
+    NotificationDetails(android: summaryAndroidDetails);
+
+    flutterLocalNotificationsPlugin.show(
+      0,
+      '새로운 알림들',
+      '${_messages.length}개의 알림이 있습니다.',
+      summaryNotificationDetails,
     );
   }
 
@@ -57,7 +83,7 @@ class _UserListViewState extends ConsumerState<UserListView> {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications),
-            onPressed: _showTestNotification,
+            onPressed: () => _showGroupedNotification('테스트 알림', '이것은 새로운 알림입니다.'),
           ),
         ],
       ),

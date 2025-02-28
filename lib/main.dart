@@ -5,6 +5,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'firebase_options.dart';
 import 'views/user_list_view.dart';
+import 'views/admin_login_view.dart';
+import 'providers/auth_provider.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -71,21 +73,25 @@ Future<void> main() async {
       );
     }
   });
+
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
     print('[onMessageOpenedApp] 알림 탭하여 앱 열림');
   });
+
   runApp(const ProviderScope(child: AdminApp()));
 }
 
-class AdminApp extends StatelessWidget {
+class AdminApp extends ConsumerWidget {
   const AdminApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoggedIn = ref.watch(authProvider);
+
     return MaterialApp(
       title: 'Admin App',
       debugShowCheckedModeBanner: false,
-      home: const UserListView(),
+      home: isLoggedIn ? const UserListView() : AdminLoginView(),
     );
   }
 }
