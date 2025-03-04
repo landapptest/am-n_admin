@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:admin_amin/views/user_list_view.dart';
 import 'package:admin_amin/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:admin_amin/admin_token_service.dart';
 
 class AdminLoginView extends ConsumerStatefulWidget {
   @override
@@ -23,11 +24,14 @@ class _AdminLoginViewState extends ConsumerState<AdminLoginView> {
 
       ref.read(authProvider.notifier).setLoggedIn(true);
 
-      // ✅ 로그인 후 ID 토큰 가져오기
+      // 로그인 후 ID 토큰 가져오기 (디버깅용)
       String? idToken = await userCredential.user?.getIdToken(true);
       print("🔑 관리자 ID 토큰: $idToken");
 
-      // ✅ Future.microtask() 사용하여 안전하게 화면 전환
+      // 관리자 로그인 성공 후, FCM 토큰을 데이터베이스에 저장합니다.
+      await AdminTokenService.updateAdminToken();
+
+      // Future.microtask()를 사용해 안전하게 화면 전환
       Future.microtask(() {
         if (mounted) {
           Navigator.pushReplacement(

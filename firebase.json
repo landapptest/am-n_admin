@@ -1,19 +1,39 @@
 {
-  "functions":
-    {
-      "source": "functions",
-      "runtime": "nodejs18",
-      "codebase": "default",
-      "region": "asia-southeast1",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ],
-      "predeploy": [
-        "/Users/euijoon/.nvm/versions/node/v18.20.6/bin/npm --prefix \"$RESOURCE_DIR\" run lint"
-      ]
-    }
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs18",
+    "codebase": "default",
+    "region": "asia-southeast1",
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "*.local"
+    ],
+    "predeploy": [
+      "/Users/euijoon/.nvm/versions/node/v18.20.6/bin/npm --prefix \"$RESOURCE_DIR\" run lint"
+    ]
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "functions": {
+      "port": 5001
+    },
+    "database": {
+      "port": 9000
+    },
+    "storage": {
+      "port": 9199
+    },
+    "tasks": {
+      "port": 9499
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  }
 }

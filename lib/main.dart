@@ -7,6 +7,7 @@ import 'firebase_options.dart';
 import 'views/user_list_view.dart';
 import 'views/admin_login_view.dart';
 import 'providers/auth_provider.dart';
+import 'admin_token_service.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -45,6 +46,10 @@ Future<void> main() async {
 
   final token = await FirebaseMessaging.instance.getToken();
   print('[FCM] 관리자 앱 Token: $token');
+
+  // 관리자로 로그인한 경우, 관리자 토큰을 데이터베이스에 저장합니다.
+  // AdminTokenService.updateAdminToken() 내부에서 현재 로그인한 사용자가 admin@admin.com인지 체크합니다.
+  await AdminTokenService.updateAdminToken();
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print('[onMessage] 포그라운드 알림 수신');
