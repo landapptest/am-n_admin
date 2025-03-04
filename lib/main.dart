@@ -43,12 +43,10 @@ Future<void> main() async {
   print('[FCM] 권한: ${settings.authorizationStatus}');
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
+  // (A) 앱이 “처음 실행”되는 시점에서 현재 기기의 FCM 토큰을 확인
   final token = await FirebaseMessaging.instance.getToken();
-  print('[FCM] 관리자 앱 Token: $token');
+  print('[DEBUG] (앱 실행 시점) FCM 토큰: $token');
 
-  // 관리자로 로그인한 경우, 관리자 토큰을 데이터베이스에 저장합니다.
-  // AdminTokenService.updateAdminToken() 내부에서 현재 로그인한 사용자가 admin@admin.com인지 체크합니다.
   await AdminTokenService.updateAdminToken();
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {

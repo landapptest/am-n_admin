@@ -4,6 +4,7 @@ import 'package:admin_amin/views/user_list_view.dart';
 import 'package:admin_amin/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:admin_amin/admin_token_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class AdminLoginView extends ConsumerStatefulWidget {
   @override
@@ -24,11 +25,11 @@ class _AdminLoginViewState extends ConsumerState<AdminLoginView> {
 
       ref.read(authProvider.notifier).setLoggedIn(true);
 
-      // 로그인 후 ID 토큰 가져오기 (디버깅용)
-      String? idToken = await userCredential.user?.getIdToken(true);
-      print("🔑 관리자 ID 토큰: $idToken");
+      // (A) 로그인 후에도 FCM 토큰 확인해서 로그 남기기
+      String? newToken = await FirebaseMessaging.instance.getToken();
+      print("[DEBUG] (로그인 직후) FCM 토큰: $newToken");
 
-      // 관리자 로그인 성공 후, FCM 토큰을 데이터베이스에 저장합니다.
+      // 관리자 로그인 성공 후, FCM 토큰을 데이터베이스에 저장
       await AdminTokenService.updateAdminToken();
 
       // Future.microtask()를 사용해 안전하게 화면 전환
